@@ -1,0 +1,27 @@
+name: CI/CD Main
+
+on:
+  push:
+    branches:
+      - main
+env:
+  TAG: latest
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login $REGISTRY -u $OWNER --password-stdin
+
+      - name: Build Docker image
+        run: docker build -t $REGISTRY/$OWNER/$IMAGE_NAME:$TAG .
+
+      - name: Push Docker image
+        run: docker push $REGISTRY/$OWNER/$IMAGE_NAME:$TAG

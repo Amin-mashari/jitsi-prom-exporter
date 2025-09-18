@@ -1,17 +1,28 @@
-FROM golang:alpine AS golang
-RUN apk update && apk add git
-RUN echo "goroot: $GOROOT"
-ADD ./exporter /go/src/exporter
-WORKDIR /go/src/exporter
-RUN go get -d -v ./...
-RUN go install -v ./...
+# ---- Build stage ----
+FROM golang:1.25.1-alpine AS builder
 
+RUN apk add --no-cache git
+
+WORKDIR /app
+
+# Copy source code
+COPY exporter/ .
+
+# Initialize go.mod if it doesn't exist and fetch dependencies
+RUN [ ! -f go.mod ] && go mod init jitsi-prom-exporter || true
+RUN go mod tidy
+
+# Build static binary
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+    go build -trimpath -ldflags="-s -w" -o /jitsi-prom-exporter .
+
+# ---- Runtime stage ----
 FROM alpine:latest
-COPY --from=golang /go/bin/exporter /usr/local/bin/
 
-RUN chmod ugo+x /usr/local/bin/exporter && adduser -D prom
+RUN adduser -D prom
+COPY --from=builder /jitsi-prom-exporter /usr/local/bin/exporter
+RUN chmod ugo+x /usr/local/bin/exporter
+
 USER prom
-
 EXPOSE 8080
-
 CMD ["exporter"]
