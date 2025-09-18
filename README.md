@@ -5,7 +5,7 @@ The basic idea is to enter the jvbbrewery MUC room and listen to the presence br
 There is a [documentation](https://github.com/jitsi/jitsi-videobridge/blob/master/doc/statistics.md) of the published statistics by the video bridges.
 
 # Run
-There are multiple ways to run the exporter. Once it is running, it will publish the collected metrics on `:8080/metrics`.
+There are multiple ways to run the exporter. Once it is running, it will publish the collected metrics on `:8090/metrics`.
 
 ## Register user in prosody
 You will have to create a XMPP user in Prosody, do this with:

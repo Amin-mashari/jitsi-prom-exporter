@@ -24,5 +24,5 @@ COPY --from=builder /jitsi-prom-exporter /usr/local/bin/exporter
 RUN chmod ugo+x /usr/local/bin/exporter
 
 USER prom
-EXPOSE 8080
+EXPOSE 8090
 CMD ["exporter"]
