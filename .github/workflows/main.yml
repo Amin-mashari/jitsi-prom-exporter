@@ -1,9 +1,9 @@
-name: CI/CD Master
+name: CI/CD master
 
 on:
   push:
     branches:
-      - Master
+      - master
 env:
   TAG: latest
 
